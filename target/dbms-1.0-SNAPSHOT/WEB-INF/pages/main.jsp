@@ -2,8 +2,6 @@
 <html>
 <head>
     <style>
-        
-        
         table, th, td {
             border: 1px solid black;
         }
@@ -59,6 +57,9 @@
     </div>
 </nav>
 
+<div class="employee-info-item">
+        <div class="employee-info-label">Employee Details:</div>
+    </div>
 <div class="employee-info">
     <div class="employee-info-item">
         <div class="employee-info-label">Employee Name:</div>
@@ -79,11 +80,30 @@
     <div class="employee-info-item">
         <div class="employee-info-label">Username:</div>
         <div class="employee-info-value">${data.Username}</div>
-         <div class="employee-info-value">${userData.EmployeeName}</div>
     </div>
-    <div>
-        ${data.MedicalInsurance}
-        123
+    
+    
+</div>
+    <br><br>
+    <div class="employee-info-item">
+        <div class="employee-info-label">Salary Details:</div>
+    </div>
+    <div class="employee-info">
+    <div class="employee-info-item">
+        <div class="employee-info-label">Salary:</div>
+        <div class="employee-info-value"> ${data.Salary} Lakhs</div>
+    </div>
+    <div class="employee-info-item">
+        <div class="employee-info-label">House Rent Allowance:</div>
+        <div class="employee-info-value">${data.HouseRentAllowance} Lakhs</div>
+    </div>
+    <div class="employee-info-item">
+        <div class="employee-info-label"> Medical Insurance:</div>
+        <div class="employee-info-value">${data.MedicalInsurance} Lakhs</div>
+    </div>
+    <div class="employee-info-item">
+        <div class="employee-info-label">Provident Fund:</div>
+        <div class="employee-info-value">${data.ProvidentFund} Lakhs</div>
     </div>
 </div>
 </body>
