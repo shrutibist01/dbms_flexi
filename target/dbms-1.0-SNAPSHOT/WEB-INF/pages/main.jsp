@@ -105,6 +105,28 @@
         <div class="employee-info-label">Provident Fund:</div>
         <div class="employee-info-value">${data.ProvidentFund} Lakhs</div>
     </div>
+    <a href="projects">check projects</a>
+
+       ${data.ProjectName}
+       ${data.ProjectID}
+     
+    <h1>Project Details</h1>
+    <table border="1">
+        <tr>
+            <th>Project ID</th>
+            <th>Project Name</th>
+            <!-- Add more columns if needed -->
+        </tr>
+        <c:forEach items="${projects}" var="projects">
+            <tr>
+                <td>${projects.ProjectID}</td>
+                <td>${projects.ProjectName}</td>
+                <!-- Display more project details as needed -->
+            </tr>
+        </c:forEach>
+    </table>
+
+    
 </div>
 </body>
 </html>

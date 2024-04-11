@@ -45,7 +45,7 @@ public class NewServlet extends HttpServlet {
        a.add(new Userdata( 12, "s","s@s"));
         a.add(new Userdata( 12,"t", "t@t"));
        request.setAttribute("a",a);
-        if (uri.equals("/")){
+       if (uri.equals("/")){
             request.getRequestDispatcher("/WEB-INF/pages/index.jsp").forward(request, response);
         }
            /* String Method=request.getMethod();
@@ -63,6 +63,9 @@ public class NewServlet extends HttpServlet {
             }
         }*/
          
+        else if (uri.equals("/projects")){
+            request.getRequestDispatcher("/WEB-INF/pages/projects.jsp").forward(request, response);
+        }
         else if(uri.equals("/login")){
             String method=request.getMethod();
             System.out.println(method);
@@ -75,9 +78,12 @@ public class NewServlet extends HttpServlet {
                 String password=request.getParameter("password");
                 System.out.println(user+password);
                 Map<String, String> n=UsersDAO.getInstance().getdata(user,password);
+                
                 if (n!=null){
                     request.setAttribute("data", n);
+                    request.setAttribute("projects", n);
                     request.getRequestDispatcher("/WEB-INF/pages/main.jsp").forward(request, response);
+                    
                 }
                 else{
                      request.setAttribute("errorMessage", "Invalid username or password");
@@ -99,6 +105,8 @@ public class NewServlet extends HttpServlet {
                 int n=UsersDAO.getInstance().admindata(user,password);
                 if (n==1){
                     request.getRequestDispatcher("/WEB-INF/pages/main.jsp").forward(request, response);
+                   
+                    
                 }
                 else{
                      request.setAttribute("errorMessage", "Invalid username or password");
