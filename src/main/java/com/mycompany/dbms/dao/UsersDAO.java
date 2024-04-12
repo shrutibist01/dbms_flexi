@@ -23,8 +23,6 @@ import javax.management.Query;
 public class UsersDAO {
 
     private static UsersDAO instance;
-    private boolean ProjectID;
-
     private UsersDAO() {
 
     }
@@ -72,21 +70,17 @@ public Map<String, String> getdata(String username, String password) {
                 data.put("Salary", rs.getString("Salary"));
                 data.put("Bonus", rs.getString("Bonus"));
                 
-                System.out.println("Authentication successful. Redirecting to main page...");
+                
                 
                 // Call the stored procedure to calculate salary split
                 String employee = rs.getString("Username");
                 Map<String, String> salarySplit = calculateSalarySplit(employee);
-                List<Map<String, String>> proj = checkProject(employee);
                 if (salarySplit != null) {
                     System.out.println("abc");
                     data.putAll(salarySplit); 
-                    for (int i = 0; i < proj.size(); i++) {
-                    Map<String, String> projectDetails = proj.get(i);
-                     projects.add(projectDetails);
-                     
-                    }
-                    //System.out.println(projects);
+                    
+                    System.out.println(data);
+                   
                 } else {
                     System.out.println("Failed to calculate salary split.");
                 }
@@ -105,25 +99,29 @@ public Map<String, String> getdata(String username, String password) {
     return data;
 }
 
-    private Map<String, String> calculateSalarySplit(String empId) {
-        Map<String, String> salarySplit = new HashMap<>();
-        try (Connection connection = DBConnectionConfigs.getConnection();
-             CallableStatement stmt = connection.prepareCall("{CALL CalculateSalarySplitByUsername(?)}")) {
-            stmt.setString(1, empId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    salarySplit.put("ProvidentFund", rs.getString("ProvidentFund"));
-                    salarySplit.put("HouseRentAllowance", rs.getString("HouseRentAllowance"));
-                    salarySplit.put("MedicalInsurance", rs.getString("MedicalInsurance"));
-                }
+
+public Map<String, String> calculateSalarySplit(String empId) {
+    Map<String, String> salarySplit = new HashMap<>();
+    try (Connection connection = DBConnectionConfigs.getConnection();
+         CallableStatement stmt = connection.prepareCall("{CALL CalculateSalarySplitByUsername(?)}")) {
+        stmt.setString(1, empId);
+        try (ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                salarySplit.put("BasicSalary", rs.getString("BasicSalary"));
+                salarySplit.put("HouseRentAllowance", rs.getString("HouseRentAllowance"));
+                salarySplit.put("SpecialAllowance", rs.getString("SpecialAllowance"));
+                salarySplit.put("Bonus", rs.getString("Bonus"));
+                salarySplit.put("IncomeTax", rs.getString("IncomeTax"));
+                salarySplit.put("ProvidentFund", rs.getString("ProvidentFund"));
+                salarySplit.put("NetSalary", rs.getString("NetSalary"));
             }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            // Handle the exception appropriately
-            salarySplit = null;
         }
-        return salarySplit;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return salarySplit;
+}
+
     
    public List<Map<String, String>> checkProject(String empUsername) {
     List<Map<String, String>> projectsList = new ArrayList<>();

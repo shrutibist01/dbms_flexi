@@ -1,3 +1,8 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib  prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<jsp:include page="/WEB-INF/pages/projects.jsp" />
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -84,49 +89,83 @@
     
     
 </div>
-    <br><br>
+   <br><br>
+<div class="employee-info-item">
+    <div class="employee-info-label">Salary Details:</div>
+</div>
+<div class="employee-info">
     <div class="employee-info-item">
-        <div class="employee-info-label">Salary Details:</div>
-    </div>
-    <div class="employee-info">
-    <div class="employee-info-item">
-        <div class="employee-info-label">Salary:</div>
-        <div class="employee-info-value"> ${data.Salary} Lakhs</div>
+        <div class="employee-info-label">Basic Salary:</div>
+        <div class="employee-info-value">${data.BasicSalary} Lakhs</div>
     </div>
     <div class="employee-info-item">
         <div class="employee-info-label">House Rent Allowance:</div>
         <div class="employee-info-value">${data.HouseRentAllowance} Lakhs</div>
     </div>
     <div class="employee-info-item">
-        <div class="employee-info-label"> Medical Insurance:</div>
-        <div class="employee-info-value">${data.MedicalInsurance} Lakhs</div>
+        <div class="employee-info-label">Special Allowance:</div>
+        <div class="employee-info-value">${data.SpecialAllowance} Lakhs</div>
+    </div>
+    <div class="employee-info-item">
+        <div class="employee-info-label">Bonus:</div>
+        <div class="employee-info-value">${data.Bonus} Lakhs</div>
+    </div>
+    <div class="employee-info-item">
+        <div class="employee-info-label">Income Tax:</div>
+        <div class="employee-info-value">${data.IncomeTax} Lakhs</div>
     </div>
     <div class="employee-info-item">
         <div class="employee-info-label">Provident Fund:</div>
         <div class="employee-info-value">${data.ProvidentFund} Lakhs</div>
     </div>
-    <a href="projects">check projects</a>
+    <div class="employee-info-item">
+        <div class="employee-info-label">Net Salary:</div>
+        <div class="employee-info-value">${data.NetSalary} Lakhs</div>
+    </div>
+</div>
 
-       ${data.ProjectName}
-       ${data.ProjectID}
-     
-    <h1>Project Details</h1>
-    <table border="1">
-        <tr>
-            <th>Project ID</th>
-            <th>Project Name</th>
-            <!-- Add more columns if needed -->
-        </tr>
-        <c:forEach items="${projects}" var="projects">
-            <tr>
-                <td>${projects.ProjectID}</td>
-                <td>${projects.ProjectName}</td>
-                <!-- Display more project details as needed -->
-            </tr>
-        </c:forEach>
-    </table>
 
-    
+<div class="employee-info-item">
+    <div class="employee-info-label">Project Details:</div>
+</div>
+<div class="employee-info">
+    <c:forEach var="project" items="${projects}">
+        <div class="employee-info-item">
+            <div class="employee-info-label">Project ID:</div>
+            <div class="employee-info-value">${project.ProjectID}</div>
+        </div>
+        <div class="employee-info-item">
+            <div class="employee-info-label">Project Name:</div>
+            <div class="employee-info-value">${project.ProjectName}</div>
+        </div>
+        <div class="employee-info-item">
+            <div class="employee-info-label">Time Period:</div>
+            <div class="employee-info-value">${project.TimePeriod}</div>
+        </div>
+        <div class="employee-info-item">
+            <div class="employee-info-label">Status:</div>
+            <div class="employee-info-value">${project.Status}</div>
+        </div>
+        <div class="employee-info-item">
+            <div class="employee-info-label">Expenses:</div>
+            <div class="employee-info-value">${project.Expenses}</div>
+        </div>
+        <div class="employee-info-item">
+            <div class="employee-info-label">Description:</div>
+            <div class="employee-info-value">${project.Description}</div>
+        </div>
+        <div class="employee-info-item">
+            <div class="employee-info-label">Team Members Details:</div>
+            <div class="employee-info-value">
+                <c:forEach var="teamMember" items="${fn:split(project.TeamMembersDetails, ',')}">
+                    ${teamMember}<br>
+                </c:forEach>
+            </div>
+        </div>
+        <hr>
+    </c:forEach>
+</div>
+
 </div>
 </body>
 </html>
