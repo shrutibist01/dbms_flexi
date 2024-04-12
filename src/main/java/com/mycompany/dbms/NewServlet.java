@@ -63,9 +63,7 @@ public class NewServlet extends HttpServlet {
             }
         }*/
          
-        else if (uri.equals("/projects")){
-            request.getRequestDispatcher("/WEB-INF/pages/projects.jsp").forward(request, response);
-        }
+       
         else if(uri.equals("/login")){
             String method=request.getMethod();
             System.out.println(method);
