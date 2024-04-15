@@ -1,76 +1,89 @@
 package com.mycompany.dbms.data;
 
 public class Empdata {
-    private int EmployeeID;
-    private String EmployeeName;
-    private String EmployeeRole;
-    private String PhoneNumber;
-    private float Salary;
-    private float Bonus;
-    private String Username;
-    private String Password;
 
+    int EmployeeID;
+    String EmployeeName;
+    String EmployeeRole;
+    String PhoneNumber;
+    float Salary;
+    float Bonus;
+    String Username;
+    String Password;
+
+    public Empdata(int employeeID, String employeeName, String employeeRole, String phoneNumber, float salary, float bonus, String username, String password) {
+        this.EmployeeID = employeeID;
+        this.EmployeeName = employeeName;
+        this.EmployeeRole = employeeRole;
+        this.PhoneNumber = phoneNumber;
+        this.Salary = salary;
+        this.Bonus = bonus;
+        this.Username = username;
+        this.Password = password;
+    }
+
+    // Getters and setters for each field
     public int getEmployeeID() {
         return EmployeeID;
     }
 
-    public void setEmployeeID(int EmployeeID) {
-        this.EmployeeID = EmployeeID;
+    public void setEmployeeID(int employeeID) {
+        this.EmployeeID = employeeID;
     }
 
     public String getEmployeeName() {
         return EmployeeName;
     }
 
-    public void setEmployeeName(String EmployeeName) {
-        this.EmployeeName = EmployeeName;
+    public void setEmployeeName(String employeeName) {
+        this.EmployeeName = employeeName;
     }
 
     public String getEmployeeRole() {
         return EmployeeRole;
     }
 
-    public void setEmployeeRole(String EmployeeRole) {
-        this.EmployeeRole = EmployeeRole;
+    public void setEmployeeRole(String employeeRole) {
+        this.EmployeeRole = employeeRole;
     }
 
     public String getPhoneNumber() {
         return PhoneNumber;
     }
 
-    public void setPhoneNumber(String PhoneNumber) {
-        this.PhoneNumber = PhoneNumber;
+    public void setPhoneNumber(String phoneNumber) {
+        this.PhoneNumber = phoneNumber;
     }
 
     public float getSalary() {
         return Salary;
     }
 
-    public void setSalary(float Salary) {
-        this.Salary = Salary;
+    public void setSalary(float salary) {
+        this.Salary = salary;
     }
 
     public float getBonus() {
         return Bonus;
     }
 
-    public void setBonus(float Bonus) {
-        this.Bonus = Bonus;
+    public void setBonus(float bonus) {
+        this.Bonus = bonus;
     }
 
     public String getUsername() {
         return Username;
     }
 
-    public void setUsername(String Username) {
-        this.Username = Username;
+    public void setUsername(String username) {
+        this.Username = username;
     }
 
     public String getPassword() {
         return Password;
     }
 
-    public void setPassword(String Password) {
-        this.Password = Password;
-    }   
+    public void setPassword(String password) {
+        this.Password = password;
+    }
 }

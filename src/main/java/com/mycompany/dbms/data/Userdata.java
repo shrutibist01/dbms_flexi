@@ -7,7 +7,19 @@ package com.mycompany.dbms.data;
 /**
  *
  * @author sandi
+CREATE TABLE Employees (
+    EmployeeID INT PRIMARY KEY,
+    EmployeeName VARCHAR(50),
+    EmployeeRole VARCHAR(50),
+    PhoneNumber CHAR(10),
+    Salary DECIMAL(10, 2),
+    Bonus DECIMAL(10, 2),
+    Username VARCHAR(50) Unique key,
+    Password VARCHAR(50) Unique key
+);
  */
+
+
 public class Userdata {
     int age;
     String name;
@@ -50,3 +62,4 @@ public String getAge() {
         this.password = password;
     }
 }
+

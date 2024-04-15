@@ -14,12 +14,12 @@
     </head>
     <body>
         <h1>Hello World Sat!</h1>
-        <a href="/main">Go to main</a>
-        <form action="/" method="post">
+        <a href="/main">Go to main</a><form action="/" method="post">
             <input type="email" name="email" placeholder="email">
             <input type="text" name="name" placeholder="name">
             <input type="text" name="age" placeholder="age">
             <input type="submit">
         </form>
+        
     </body>
 </html>
