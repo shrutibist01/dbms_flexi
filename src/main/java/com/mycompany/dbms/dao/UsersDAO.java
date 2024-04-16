@@ -69,7 +69,6 @@ public class UsersDAO {
                     data.put("PhoneNumber", rs.getString("PhoneNumber"));
                     data.put("Username", rs.getString("Username"));
                     data.put("Salary", rs.getString("Salary"));
-                    data.put("Bonus", rs.getString("Bonus"));
 
                     // Call the stored procedure to calculate salary split
                     String employee = rs.getString("Username");
@@ -166,7 +165,6 @@ public class UsersDAO {
                     dat.put("PhoneNumber", rs.getString("PhoneNumber"));
                     dat.put("Username", rs.getString("Username"));
                     dat.put("Salary", rs.getString("Salary"));
-                    dat.put("Bonus", rs.getString("Bonus"));
                     // Authentication succeeded
                     return dat;
                 } else {
@@ -179,6 +177,7 @@ public class UsersDAO {
         // Authentication failed
         return null;
     }
+    
 
     public int save(Empdata user) {
         Connection connection = DBConnectionConfigs.getConnection();
@@ -192,15 +191,14 @@ public class UsersDAO {
                 return (0);
                 //throw new RuntimeException("EmployeeID or Username already exists.");
             } else {
-                PreparedStatement pr = connection.prepareStatement("INSERT INTO employees (EmployeeID, EmployeeName, EmployeeRole, PhoneNumber, Salary, Bonus, Username, Password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                PreparedStatement pr = connection.prepareStatement("INSERT INTO employees (EmployeeID, EmployeeName, EmployeeRole, PhoneNumber, Salary, Username, Password) VALUES (?, ?, ?, ?, ?, ?, ?)");
                 pr.setInt(1, user.getEmployeeID());
                 pr.setString(2, user.getEmployeeName());
                 pr.setString(3, user.getEmployeeRole());
                 pr.setString(4, user.getPhoneNumber());
                 pr.setFloat(5, user.getSalary());
-                pr.setFloat(6, user.getBonus());
-                pr.setString(7, user.getUsername());
-                pr.setString(8, user.getPassword());
+                pr.setString(6, user.getUsername());
+                pr.setString(7, user.getPassword());
                 pr.executeUpdate();
                 return (1);
             }

@@ -7,17 +7,17 @@ public class Empdata {
     String EmployeeRole;
     String PhoneNumber;
     float Salary;
-    float Bonus;
+  
     String Username;
     String Password;
 
-    public Empdata(int employeeID, String employeeName, String employeeRole, String phoneNumber, float salary, float bonus, String username, String password) {
+    public Empdata(int employeeID, String employeeName, String employeeRole, String phoneNumber, float salary, String username, String password) {
         this.EmployeeID = employeeID;
         this.EmployeeName = employeeName;
         this.EmployeeRole = employeeRole;
         this.PhoneNumber = phoneNumber;
         this.Salary = salary;
-        this.Bonus = bonus;
+        
         this.Username = username;
         this.Password = password;
     }
@@ -63,13 +63,7 @@ public class Empdata {
         this.Salary = salary;
     }
 
-    public float getBonus() {
-        return Bonus;
-    }
-
-    public void setBonus(float bonus) {
-        this.Bonus = bonus;
-    }
+   
 
     public String getUsername() {
         return Username;

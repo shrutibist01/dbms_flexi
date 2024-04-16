@@ -48,7 +48,13 @@ public class NewServlet extends HttpServlet {
         request.setAttribute("a", a);
         if (uri.equals("/")) {
             request.getRequestDispatcher("/WEB-INF/pages/index.jsp").forward(request, response);
-        } /* String Method=request.getMethod();
+        }
+        else if (uri.equals("/empsal")) {
+            request.getRequestDispatcher("/WEB-INF/pages/empsal.jsp").forward(request, response);
+        }
+        if (uri.equals("/empproj")) {
+            request.getRequestDispatcher("/WEB-INF/pages/empproj.jsp").forward(request, response);
+        }/* String Method=request.getMethod();
             System.out.println(Method);
             if (Method.equals("GET")) {
             
@@ -75,10 +81,9 @@ public class NewServlet extends HttpServlet {
                 String employeeRole = request.getParameter("EmployeeRole");
                 String phoneNumber = request.getParameter("PhoneNumber");
                 String salary = request.getParameter("Salary");
-                String bonus = request.getParameter("Bonus");
                 String username1 = request.getParameter("Username");
                 String password = request.getParameter("Password");
-                Empdata e = new Empdata(Integer.parseInt(employeeID), employeeName, employeeRole, phoneNumber, Float.parseFloat(salary), Float.parseFloat(bonus), username1, password);
+                Empdata e = new Empdata(Integer.parseInt(employeeID), employeeName, employeeRole, phoneNumber, Float.parseFloat(salary), username1, password);
                 int l = UsersDAO.getInstance().save(e);
                 if (l == 1) {
                     response.sendRedirect("/admin");
@@ -94,25 +99,25 @@ public class NewServlet extends HttpServlet {
             String method = request.getMethod();
             System.out.println(method);
             if (method.equals("GET")) {
-
                 request.getRequestDispatcher("/WEB-INF/pages/login.jsp").forward(request, response);
             } else {
                 String user = request.getParameter("username");
                 String password = request.getParameter("password");
                 System.out.println(user + password);
-                Map<String, String> n = UsersDAO.getInstance().getdata(user, password);
+                Map<String, String> userData = UsersDAO.getInstance().getdata(user, password);
+                if (userData != null) {
+                    // Set username in session
+                    request.getSession().setAttribute("username", user);
 
-                if (n != null) {
-                    request.setAttribute("data", n);
+                    // Forward to main.jsp
                     List<Map<String, String>> projects = UsersDAO.getInstance().checkProject(user);
+                    request.setAttribute("data", userData);
                     request.setAttribute("projects", projects);
-
                     request.getRequestDispatcher("/WEB-INF/pages/main.jsp").forward(request, response);
                 } else {
                     request.setAttribute("errorMessage", "Invalid username or password");
                     request.getRequestDispatcher("/WEB-INF/pages/login.jsp").forward(request, response);
                 }
-
             }
         } else if (uri.equals("/adminlog")) {
             String method = request.getMethod();

@@ -89,81 +89,16 @@
     
 </div>
    <br><br>
-<div class="employee-info-item">
-    <div class="employee-info-label">Salary Details:</div>
-</div>
-<div class="employee-info">
-    <div class="employee-info-item">
-        <div class="employee-info-label">Basic Salary:</div>
-        <div class="employee-info-value">${data.BasicSalary} Lakhs</div>
-    </div>
-    <div class="employee-info-item">
-        <div class="employee-info-label">House Rent Allowance:</div>
-        <div class="employee-info-value">${data.HouseRentAllowance} Lakhs</div>
-    </div>
-    <div class="employee-info-item">
-        <div class="employee-info-label">Special Allowance:</div>
-        <div class="employee-info-value">${data.SpecialAllowance} Lakhs</div>
-    </div>
-    <div class="employee-info-item">
-        <div class="employee-info-label">Bonus:</div>
-        <div class="employee-info-value">${data.Bonus} Lakhs</div>
-    </div>
-    <div class="employee-info-item">
-        <div class="employee-info-label">Income Tax:</div>
-        <div class="employee-info-value">${data.IncomeTax} Lakhs</div>
-    </div>
-    <div class="employee-info-item">
-        <div class="employee-info-label">Provident Fund:</div>
-        <div class="employee-info-value">${data.ProvidentFund} Lakhs</div>
-    </div>
-    <div class="employee-info-item">
-        <div class="employee-info-label">Net Salary:</div>
-        <div class="employee-info-value">${data.NetSalary} Lakhs</div>
-    </div>
 </div>
 
 
-<div class="employee-info-item">
-    <div class="employee-info-label">Project Details:</div>
-</div>
-<div class="employee-info">
-    <c:forEach var="project" items="${projects}">
-        <div class="employee-info-item">
-            <div class="employee-info-label">Project ID:</div>
-            <div class="employee-info-value">${project.ProjectID}</div>
-        </div>
-        <div class="employee-info-item">
-            <div class="employee-info-label">Project Name:</div>
-            <div class="employee-info-value">${project.ProjectName}</div>
-        </div>
-        <div class="employee-info-item">
-            <div class="employee-info-label">Time Period:</div>
-            <div class="employee-info-value">${project.TimePeriod}</div>
-        </div>
-        <div class="employee-info-item">
-            <div class="employee-info-label">Status:</div>
-            <div class="employee-info-value">${project.Status}</div>
-        </div>
-        <div class="employee-info-item">
-            <div class="employee-info-label">Expenses:</div>
-            <div class="employee-info-value">${project.Expenses}</div>
-        </div>
-        <div class="employee-info-item">
-            <div class="employee-info-label">Description:</div>
-            <div class="employee-info-value">${project.Description}</div>
-        </div>
-        <div class="employee-info-item">
-            <div class="employee-info-label">Team Members Details:</div>
-            <div class="employee-info-value">
-                <c:forEach var="teamMember" items="${fn:split(project.TeamMembersDetails, ',')}">
-                    ${teamMember}<br>
-                </c:forEach>
-            </div>
-        </div>
-        <hr>
-    </c:forEach>
-</div>
+
+
+   
+<a href="empproj?username=<%= request.getSession().getAttribute("username") %>">View Projects</a>
+<a href="empsal?username=<%= request.getSession().getAttribute("username") %>">View Salary</a>
+
+
 
 </div>
 </body>

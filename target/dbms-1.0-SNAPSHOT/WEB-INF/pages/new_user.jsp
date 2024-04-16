@@ -56,13 +56,11 @@
     <input type="text" id="EmployeeRole" name="EmployeeRole" placeholder="Employee Role" required>
     
     <label for="PhoneNumber">Phone Number:</label>
-    <input type="tel" id="PhoneNumber" name="PhoneNumber" placeholder="Phone Number (nnnnnnnnnn)" pattern="[0-9]{10}" required>
+    <input type="tel" id="PhoneNumber" name="PhoneNumber" placeholder="Phone Number" pattern="[0-9]{10}" required>
     
     <label for="Salary">Salary:</label>
     <input type="number" id="Salary" name="Salary" placeholder="Salary" min="0" required>
     
-    <label for="Bonus">Bonus:</label>
-    <input type="number" id="Bonus" name="Bonus" placeholder="Bonus" min="0" required>
     
     <label for="Username">Username:</label>
     <input type="text" id="Username" name="Username" placeholder="Username" required>
