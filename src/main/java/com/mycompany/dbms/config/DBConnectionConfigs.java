@@ -16,7 +16,7 @@ public class DBConnectionConfigs {
             }catch (ClassNotFoundException ex){
                 Logger.getLogger(DBConnectionConfigs.class.getName()).log(Level.SEVERE,null,ex);
             }
-            return DriverManager.getConnection("jdbc:mysql://localhost:3306/proj","root","Satviki@123");
+            return DriverManager.getConnection("jdbc:mysql://localhost:3306/project","root","shruti2004");
         }catch (SQLException ex){
             Logger.getLogger(DBConnectionConfigs.class.getName()).log(Level.SEVERE,null,ex);            
         }
