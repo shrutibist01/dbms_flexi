@@ -5,7 +5,10 @@
 package com.mycompany.dbms;
 
 import com.mycompany.dbms.dao.UsersDAO;
+import com.mycompany.dbms.data.Addfunds;
 import com.mycompany.dbms.data.Empdata;
+import com.mycompany.dbms.data.ExtraExpenseAdd;
+import com.mycompany.dbms.data.Project;
 import com.mycompany.dbms.data.Userdata;
 import jakarta.security.enterprise.authentication.mechanism.http.openid.OpenIdConstant;
 import java.io.IOException;
@@ -48,8 +51,7 @@ public class NewServlet extends HttpServlet {
         request.setAttribute("a", a);
         if (uri.equals("/")) {
             request.getRequestDispatcher("/WEB-INF/pages/index.jsp").forward(request, response);
-        }
-        else if (uri.equals("/empsal")) {
+        } else if (uri.equals("/empsal")) {
             request.getRequestDispatcher("/WEB-INF/pages/empsal.jsp").forward(request, response);
         }
         if (uri.equals("/empproj")) {
@@ -132,19 +134,85 @@ public class NewServlet extends HttpServlet {
 
                 Map<String, String> userData = UsersDAO.getInstance().admindata(user, password);
                 if (userData != null && !userData.isEmpty()) {
-                    // Authentication succeeded
                     request.getSession().setAttribute("userData", userData); // Storing user data in session for later use
                     request.getRequestDispatcher("/admin").forward(request, response);
                 } else {
-                    // Authentication failed
                     request.setAttribute("errorMessage", "Invalid username or password");
                     request.getRequestDispatcher("/WEB-INF/pages/login.jsp").forward(request, response);
                 }
             }
         }
+        else if (uri.equals("/addempproj")) {
+            String Method = request.getMethod();
+            System.out.println(Method);
+            if (Method.equals("GET")) {
+                request.getRequestDispatcher("/WEB-INF/pages/empprojnew.jsp").forward(request, response);
+            } else if (Method.equals("POST")) {
+                System.out.println("abc");
+                String pname = request.getParameter("pname");
+                float timeperiod = Float.parseFloat(request.getParameter("timeperiod"));
+                String status = request.getParameter("status");
+                float expenses = Float.parseFloat(request.getParameter("expenses"));
+                String description = request.getParameter("description");
+
+                Project project = new Project(pname, timeperiod, status, expenses, description);
+                UsersDAO usersDAO = UsersDAO.getInstance();
+                int result = usersDAO.saveproj(project);
+                if (result == 1) {
+                    response.sendRedirect("/admin?success=true");
+                } else {
+                    request.setAttribute("errorMessage", "Error in data sending");
+                }
+            }
+        } 
+        
+                else if(uri.equals("/addfunds")) {
+            String method = request.getMethod();
+            System.out.println(method);
+            if (method.equals("GET")) {
+                request.getRequestDispatcher("/WEB-INF/pages/addfunds.jsp").forward(request, response);
+            } else if (method.equals("POST")) {
+                String transactionID = request.getParameter("transactionID");
+                String InvestorName  = request.getParameter("InvestorName");
+                int amount = Integer.parseInt(request.getParameter("amount"));
+                
+                Addfunds fund = new Addfunds(transactionID,InvestorName,amount);
+                UsersDAO usersDAO = UsersDAO.getInstance();
+                int result = usersDAO.AddnewFunds(fund);
+                if (result == 1) {
+                    response.sendRedirect("/admin?success=true");
+                } else {
+                    request.setAttribute("errorMessage", "Error in data sending");
+                    request.getRequestDispatcher("/admin").forward(request, response);
+                }
+            }}
+
+        else if(uri.equals("/addextraexpense")) {
+            String method = request.getMethod();
+            System.out.println(method);
+            if (method.equals("GET")) {
+                request.getRequestDispatcher("/WEB-INF/pages/extraexpenseadd.jsp").forward(request, response);
+            } else if (method.equals("POST")) {
+                String purpose = request.getParameter("purpose");
+                int amount = Integer.parseInt(request.getParameter("amount"));
+                ExtraExpenseAdd expenseAdd = new ExtraExpenseAdd(purpose, amount);
+                UsersDAO usersDAO = UsersDAO.getInstance();
+                int result = usersDAO.addextra(expenseAdd);
+                if (result == 1) {
+                    response.sendRedirect("/admin?success=true");
+                } else {
+                    request.setAttribute("errorMessage", "Error in data sending");
+                    request.getRequestDispatcher("/admin").forward(request, response);
+                }
+            }
+        } else {
+            processRequest(request, response);
+        }
+
+     
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *

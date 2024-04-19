@@ -22,18 +22,18 @@
 
         <h1>Project Management</h1>
         <div>
-            <button><i class="fas fa-plus-circle"></i> Add Project</button>
+            <a href="/addempproj"><button><i class="fas fa-plus-circle"></i> Add Project</button></a>
         </div>
         <div>
             <button><i class="fas fa-edit"></i> Update Project</button>
         </div>
         <div>
-            <button><i class="fas fa-dollar-sign"></i> Add Fundings</button>
+            <a href="/addfunds"><button><i class="fas fa-dollar-sign"></i> Add Fundings</button></a>
         </div>
 
         <h1>Financial Management</h1>
         <div>
-            <button><i class="fas fa-file-invoice-dollar"></i> Add Miscellaneous Expenditure</button>
+            <a href="/addextraexpense"><button><i class="fas fa-file-invoice-dollar"></i> Add Miscellaneous Expenditure</button></a>
         </div>
         <div>
             <button><i class="fas fa-shopping-cart"></i> Add Sales</button>

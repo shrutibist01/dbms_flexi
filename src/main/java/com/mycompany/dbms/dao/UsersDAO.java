@@ -5,7 +5,10 @@
 package com.mycompany.dbms.dao;
 
 import com.mycompany.dbms.config.DBConnectionConfigs;
+import com.mycompany.dbms.data.Addfunds;
 import com.mycompany.dbms.data.Empdata;
+import com.mycompany.dbms.data.ExtraExpenseAdd;
+import com.mycompany.dbms.data.Project;
 import com.mycompany.dbms.data.Userdata;
 import com.sun.source.tree.BreakTree;
 import java.sql.CallableStatement;
@@ -15,6 +18,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -177,7 +181,6 @@ public class UsersDAO {
         // Authentication failed
         return null;
     }
-    
 
     public int save(Empdata user) {
         Connection connection = DBConnectionConfigs.getConnection();
@@ -208,6 +211,117 @@ public class UsersDAO {
 
         }
         return (0);
+    }
+
+    public int addextra(ExtraExpenseAdd expense) {
+        Connection connection = null;
+        PreparedStatement insertStmt = null;
+        ResultSet rs = null;
+        try {
+            connection = DBConnectionConfigs.getConnection();
+
+            // Check if the Expense already exists based on Purpose and Amount
+            PreparedStatement checkStmt = connection.prepareStatement("SELECT * FROM extraexpenses WHERE Purpose = ? AND Amount = ?");
+            checkStmt.setString(1, expense.getPurpose());
+            checkStmt.setInt(2, expense.getAmount());
+            rs = checkStmt.executeQuery();
+
+            if (rs.next()) {
+                return 0; // Expense already exists
+            } else {
+                insertStmt = connection.prepareStatement("INSERT INTO extraexpenses (Purpose, Amount) VALUES (?, ?)");
+                insertStmt.setString(1, expense.getPurpose());
+                insertStmt.setInt(2, expense.getAmount());
+                insertStmt.executeUpdate();
+                return 1; // Successfully inserted
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, "An SQL exception occurred", ex);
+            return 0; // Error occurred
+        } finally {
+            // Close all resources in a finally block
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (insertStmt != null) {
+                    insertStmt.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, "An SQL exception occurred while closing resources", ex);
+            }
+        }
+    }
+    public int AddnewFunds(Addfunds addFunds) {
+        Connection connection = null;
+        PreparedStatement insertStmt = null;
+        try {
+            connection = DBConnectionConfigs.getConnection();
+
+            insertStmt = connection.prepareStatement("INSERT INTO AddFunds (TransactionID, InvestorName, Amount) VALUES (?, ?, ?)");
+            insertStmt.setString(1, addFunds.getTransactionID());
+            insertStmt.setString(2, addFunds.getInvestorName());
+            insertStmt.setInt(3, addFunds.getAmount());
+            insertStmt.executeUpdate();
+            
+            return 1; // Successfully inserted
+        } catch (SQLException ex) {
+            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return 0; // Error occurred
+        } finally {
+            // Close all resources in a finally block
+            try {
+                if (insertStmt != null) {
+                    insertStmt.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException ex) {
+               Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    public int saveproj(Project project) {
+        Connection connection = null;
+        PreparedStatement projectStmt = null;
+        try {
+            connection = DBConnectionConfigs.getConnection();
+            String projectQuery = "INSERT INTO Projects (Pname, timeperiod, status, expenses, description) VALUES ( ?, ?, ?, ?, ?)";
+            projectStmt = connection.prepareStatement(projectQuery);
+            projectStmt.setString(1, project.getPname());
+            projectStmt.setFloat(2, project.getTimeperiod());
+            projectStmt.setString(3, project.getStatus());
+            projectStmt.setFloat(4, project.getExpenses());
+            projectStmt.setString(5, project.getDescription());
+
+            // Debugging: Print project query and parameters
+            System.out.println("Project Query: " + projectQuery);
+            System.out.println("Project Parameters: " + project.getPname() + ", " + project.getTimeperiod() + ", " + project.getStatus() + ", " + project.getExpenses() + ", " + project.getDescription());
+
+            projectStmt.executeUpdate();
+            return 1; // Success
+        } catch (SQLException ex) {
+            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return 0; // Failure
+        } catch (Exception ex) {
+            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return 0; // Failure
+        } finally {
+            try {
+                if (projectStmt != null) {
+                    projectStmt.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
 }
