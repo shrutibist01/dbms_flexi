@@ -25,8 +25,10 @@
             <a href="/addempproj"><button><i class="fas fa-plus-circle"></i> Add Project</button></a>
         </div>
         <div>
-            <button><i class="fas fa-edit"></i> Update Project</button>
+            <a href="/UpdateProjectStatus"><button><i class="fas fa-edit"></i> Update Project</button></a>
         </div>
+        <div><a href="/UpdateProjEmployee"><button><i class="fas fa-user-plus"></i> Add Employee to Project</button></a>
+</div>
         <div>
             <a href="/addfunds"><button><i class="fas fa-dollar-sign"></i> Add Fundings</button></a>
         </div>
@@ -39,7 +41,7 @@
             <a href="/addsale"><button><i class="fas fa-shopping-cart"></i> Add Sales</button></a>
         </div>
         <div>
-            <button><i class="fas fa-chart-line"></i> Get Report for Net Expenditure</button>
+            <a href="/netexpense"><button><i class="fas fa-chart-line"></i> Get Report for Net Expenditure</button></a>
         </div>
 
         <!-- Include JS frameworks or custom scripts here -->

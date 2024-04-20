@@ -9,6 +9,7 @@ import com.mycompany.dbms.data.Addfunds;
 import com.mycompany.dbms.data.Addsales;
 import com.mycompany.dbms.data.Empdata;
 import com.mycompany.dbms.data.Employee;
+import com.mycompany.dbms.data.EmployeeProj;
 import com.mycompany.dbms.data.ExtraExpenseAdd;
 import com.mycompany.dbms.data.Project;
 import com.mycompany.dbms.data.Userdata;
@@ -186,6 +187,26 @@ public class NewServlet extends HttpServlet {
                     request.getRequestDispatcher("/admin").forward(request, response);
                 }
             }
+        } else if (uri.equals("/UpdateProjEmployee")) {
+            // Handle update employee logic here
+            request.getRequestDispatcher("/WEB-INF/pages/projemp.jsp").forward(request, response);
+            String projectId = request.getParameter("projectId");
+            int numEmployees = Integer.parseInt(request.getParameter("numEmployees"));
+
+            List<EmployeeProj> employees = new ArrayList<>();
+            for (int i = 0; i < numEmployees; i++) {
+                String employeeId = request.getParameter("employeeId_" + i);
+                employees.add(new EmployeeProj(employeeId));
+            }
+            System.out.println(employees);
+            UsersDAO usersDAO = UsersDAO.getInstance();
+            int rowsAffected = usersDAO.saveEmployees(projectId, employees);
+
+            if (rowsAffected > 0) {
+                response.getWriter().println("Employees added successfully!");
+            } else {
+                response.getWriter().println("Failed to add employees.");
+            }
         } else if (uri.equals("/UpdateEmployee")) {
             String method = request.getMethod();
             System.out.println(method);
@@ -199,6 +220,25 @@ public class NewServlet extends HttpServlet {
                 UsersDAO usersDAO = UsersDAO.getInstance(); // Redirect to error page
                 usersDAO.updateEmployee(empID, empRole, phone, salary);
                 response.sendRedirect("/admin");
+            }
+        } else if (uri.equals("/UpdateProjectStatus")) {
+            String method = request.getMethod();
+            if (method.equals("GET")) {
+                request.getRequestDispatcher("/WEB-INF/pages/updateprojectstatus.jsp").forward(request, response);
+            } else if (method.equals("POST")) {
+                String projectID = request.getParameter("projectID");
+                String newStatus = request.getParameter("newStatus");
+
+                try {
+                    UsersDAO usersDAO = UsersDAO.getInstance();
+                    System.out.println(projectID + newStatus);
+                    String resultMessage = usersDAO.updateProjectStatus(projectID, newStatus);
+                    request.setAttribute("resultMessage", resultMessage);
+                    request.getRequestDispatcher("/WEB-INF/pages/updateprojectstatus.jsp").forward(request, response);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    response.sendRedirect("/error.jsp");
+                }
             }
         } else if (uri.equals("/addextraexpense")) {
 
@@ -227,12 +267,12 @@ public class NewServlet extends HttpServlet {
 
             request.setAttribute("employees", employees);
             request.getRequestDispatcher("/WEB-INF/pages/showemployees.jsp").forward(request, response);
-            System.out.println("abc");
-            System.out.println(employees);
-            System.out.println("abc");
+            //System.out.println("abc");
+            // System.out.println(employees);
+            //   System.out.println("abc");
         }
         if (uri.equals("/deleteEmployee") && request.getMethod().equalsIgnoreCase("POST")) {
-            System.out.println("fuckking work");
+
             String employeeIDStr = request.getParameter("employeeID");
             if (employeeIDStr != null && !employeeIDStr.isEmpty()) {
                 int employeeID = Integer.parseInt(employeeIDStr);
@@ -274,6 +314,36 @@ public class NewServlet extends HttpServlet {
                 }
             }
         }
+
+        
+
+        
+        else if (uri.equals("/netexpense")) {
+            // Add your code here for handling "/netexpense" URI
+            // This block will execute if the URI is "/netexpense"
+            UsersDAO usersDAO = UsersDAO.getInstance();
+        
+            List<Map<String, String>> employeesData = usersDAO.expenseEmployees();
+            List<Map<String, String>> extraExpenseData = usersDAO.expenseExtra();
+            List<Map<String, String>> projectData = usersDAO.expenseProjects();
+            List<Map<String, String>> salesData = usersDAO.expensesales();
+            List<Map<String, String>> fundsData = usersDAO.expensefunds();
+            List<Map<String, String>> marketingData = usersDAO.expensemarketing();
+            
+            Map<String, Double> subtotals = UsersDAO.executeAndStoreSubtotals();
+            String result = usersDAO.calculateNetProfitLoss();
+
+            request.setAttribute("employeesData", employeesData);
+            request.setAttribute("extraExpenseData", extraExpenseData);
+            request.setAttribute("projectData", projectData);
+            request.setAttribute("salesData", salesData);
+            request.setAttribute("fundsData", fundsData);
+            request.setAttribute("marketingData", marketingData);
+            request.setAttribute("subtotals", subtotals);
+            request.setAttribute("result", result);
+            request.getRequestDispatcher("/WEB-INF/pages/expense.jsp").forward(request, response);
+        } 
+  
 
     }
 

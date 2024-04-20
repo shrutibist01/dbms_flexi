@@ -9,6 +9,7 @@ import com.mycompany.dbms.data.Addfunds;
 import com.mycompany.dbms.data.Addsales;
 import com.mycompany.dbms.data.Empdata;
 import com.mycompany.dbms.data.Employee;
+import com.mycompany.dbms.data.EmployeeProj;
 import com.mycompany.dbms.data.ExtraExpenseAdd;
 import com.mycompany.dbms.data.Project;
 import com.mycompany.dbms.data.Userdata;
@@ -21,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -215,6 +217,32 @@ public class UsersDAO {
         return (0);
     }
 
+    public String updateProjectStatus(String projectID, String newStatus) {
+        String resultMessage = "";
+        Connection connection = null;
+        try {
+            connection = DBConnectionConfigs.getConnection();
+            CallableStatement statement = connection.prepareCall("{? = CALL UpdateProjectStatus(?, ?)}");
+            statement.registerOutParameter(1, Types.VARCHAR); // Register the return type
+            statement.setString(2, projectID);
+            statement.setString(3, newStatus);
+            statement.execute();
+            resultMessage = statement.getString(1); // Get the result from the first parameter
+        } catch (SQLException e) {
+            e.printStackTrace(); // Handle the exception as needed
+        } finally {
+            // Close the connection
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return resultMessage;
+    }
+
     public int addextra(ExtraExpenseAdd expense) {
         Connection connection = null;
         PreparedStatement insertStmt = null;
@@ -401,11 +429,9 @@ public class UsersDAO {
                     dat.put("Username", rs.getString("Username"));
                     dat.put("Salary", rs.getString("Salary"));
                     employeesData.add(dat);
-                    
-                    
+
                 }
-                
-                
+
                 return employeesData;
             }
         } catch (SQLException ex) {
@@ -414,40 +440,58 @@ public class UsersDAO {
         return null;
     }
 
-public void deleteEmployee(int employeeID) {
-    try (Connection connection = DBConnectionConfigs.getConnection()) {
-        // Start a transaction
-        connection.setAutoCommit(false);
+    public void deleteEmployee(int employeeID) {
+        try (Connection connection = DBConnectionConfigs.getConnection()) {
+            // Start a transaction
+            connection.setAutoCommit(false);
 
-        try (PreparedStatement statement = connection.prepareStatement("DELETE FROM projectemployees WHERE EmployeeID = ?")) {
-            statement.setInt(1, employeeID);
-            statement.executeUpdate();
+            try (PreparedStatement statement = connection.prepareStatement("DELETE FROM projectemployees WHERE EmployeeID = ?")) {
+                statement.setInt(1, employeeID);
+                statement.executeUpdate();
+            } catch (SQLException ex) {
+                connection.rollback(); // Rollback transaction if an error occurs
+                Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, "An error occurred while deleting employee's projects", ex);
+                return;
+            }
+
+            try (PreparedStatement statement = connection.prepareStatement("DELETE FROM employees WHERE EmployeeID = ?")) {
+                statement.setInt(1, employeeID); // Setting int instead of String
+                statement.executeUpdate();
+            } catch (SQLException ex) {
+                connection.rollback(); // Rollback transaction if an error occurs
+                Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, "An error occurred while deleting employee", ex);
+                return;
+            }
+
+            // Commit the transaction if all operations succeed
+            connection.commit();
         } catch (SQLException ex) {
-            connection.rollback(); // Rollback transaction if an error occurs
-            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, "An error occurred while deleting employee's projects", ex);
-            return;
+            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, "An error occurred while managing transaction", ex);
         }
-
-        try (PreparedStatement statement = connection.prepareStatement("DELETE FROM employees WHERE EmployeeID = ?")) {
-            statement.setInt(1, employeeID); // Setting int instead of String
-            statement.executeUpdate();
-        } catch (SQLException ex) {
-            connection.rollback(); // Rollback transaction if an error occurs
-            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, "An error occurred while deleting employee", ex);
-            return;
-        }
-
-        // Commit the transaction if all operations succeed
-        connection.commit();
-    } catch (SQLException ex) {
-        Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, "An error occurred while managing transaction", ex);
     }
-}
 
+    public int saveEmployees(String projectId, List<EmployeeProj> employees) {
+        int rowsAffected = 0;
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = DBConnectionConfigs.getConnection();
+            for (EmployeeProj employee : employees) {
+                String query = "INSERT INTO projectemployees (ProjectID, EmployeeID) VALUES (?, ?)";
+                statement = connection.prepareStatement(query);
+                statement.setString(1, projectId);
+                statement.setString(2, employee.getID());
+                rowsAffected += statement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
 
+        }
+        return rowsAffected;
+    }
 
-
-public int saveproj(Project project) {
+    public int saveproj(Project project) {
         Connection connection = null;
         PreparedStatement projectStmt = null;
         try {
@@ -467,18 +511,14 @@ public int saveproj(Project project) {
             projectStmt.executeUpdate();
             return 1; // Success
 
-
-} catch (SQLException ex) {
-            Logger.getLogger(UsersDAO.class  
-
-.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(UsersDAO.class
+                    .getName()).log(Level.SEVERE, null, ex);
             return 0; // Failure
 
-
-} catch (Exception ex) {
-            Logger.getLogger(UsersDAO.class  
-
-.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(UsersDAO.class
+                    .getName()).log(Level.SEVERE, null, ex);
             return 0; // Failure
         } finally {
             try {
@@ -488,13 +528,179 @@ public int saveproj(Project project) {
                 if (connection != null) {
                     connection.close();
 
-}
+                }
             } catch (SQLException ex) {
-                Logger.getLogger(UsersDAO.class  
-
-.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(UsersDAO.class
+                        .getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
 
+    public List<Map<String, String>> expenseEmployees() {
+        List<Map<String, String>> employeesData = new ArrayList<>();
+        try (Connection connection = DBConnectionConfigs.getConnection(); PreparedStatement pr = connection.prepareStatement("SELECT * FROM employees")) {
+
+            try (ResultSet rs = pr.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, String> dat = new HashMap<>();
+                    dat.put("EmployeeID", rs.getString("EmployeeID"));
+                    dat.put("EmployeeName", rs.getString("EmployeeName"));
+                    dat.put("Salary", rs.getString("Salary"));
+                    employeesData.add(dat);
+
+                }
+                return employeesData;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, "An error occurred while fetching employees data", ex);
+        }
+        return null;
+    }
+
+    public List<Map<String, String>> expenseExtra() {
+        List<Map<String, String>> expenseData = new ArrayList<>();
+        try (Connection connection = DBConnectionConfigs.getConnection(); PreparedStatement pr = connection.prepareStatement("SELECT * FROM extraexpenses")) {
+
+            try (ResultSet rs = pr.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, String> dat = new HashMap<>();
+                    dat.put("ExpenseID", rs.getString("ExpenseID"));
+                    dat.put("Purpose", rs.getString("Purpose"));
+                    dat.put("Amount", rs.getString("Amount"));
+                    expenseData.add(dat);
+
+                }
+                System.out.println(expenseData);
+                return expenseData;
+                
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, "An error occurred while fetching employees data", ex);
+        }
+        return null;
+    }
+
+    public List<Map<String, String>> expenseProjects() {
+        List<Map<String, String>> projects = new ArrayList<>();
+        try (Connection connection = DBConnectionConfigs.getConnection(); PreparedStatement pr = connection.prepareStatement("SELECT * FROM projects")) {
+
+            try (ResultSet rs = pr.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, String> dat = new HashMap<>();
+                    dat.put("PID", rs.getString("PID"));
+                    dat.put("Pname", rs.getString("Pname"));
+                    dat.put("expenses", rs.getString("expenses"));
+                    projects.add(dat);
+
+                }
+                return projects;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, "An error occurred while fetching employees data", ex);
+        }
+        return null;
+    }
+
+    public List<Map<String, String>> expensesales() {
+        List<Map<String, String>> sales = new ArrayList<>();
+        try (Connection connection = DBConnectionConfigs.getConnection(); PreparedStatement pr = connection.prepareStatement("SELECT * FROM sales")) {
+
+            try (ResultSet rs = pr.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, String> dat = new HashMap<>();
+                    dat.put("SaleID", rs.getString("SaleID"));
+                    dat.put("profit", rs.getString("profit"));
+                    sales.add(dat);
+
+                }
+                return sales;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, "An error occurred while fetching employees data", ex);
+        }
+        return null;
+    }
+
+    public List<Map<String, String>> expensefunds() {
+        List<Map<String, String>> funds = new ArrayList<>();
+        try (Connection connection = DBConnectionConfigs.getConnection(); PreparedStatement pr = connection.prepareStatement("SELECT * FROM funds")) {
+
+            try (ResultSet rs = pr.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, String> dat = new HashMap<>();
+                    dat.put("TransactionID", rs.getString("TransactionID"));
+                    dat.put("InvestorName", rs.getString("InvestorName"));
+                    dat.put("Amount", rs.getString("Amount"));
+                    funds.add(dat);
+
+                }
+                return funds;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, "An error occurred while fetching employees data", ex);
+        }
+        return null;
+    }
+
+    public static Map<String, Double> executeAndStoreSubtotals() {
+        Map<String, Double> subtotals = new HashMap<>();
+        Connection connection = DBConnectionConfigs.getConnection();
+
+        try {
+            // Execute each SQL query and store the results
+            String[] tables = {"employee", "project", "extra", "sales", "marketing", "funds"};
+            for (String table : tables) {
+                String query = "SELECT subtotal(?)";
+                try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+                    pstmt.setString(1, table);
+                    try (ResultSet rs = pstmt.executeQuery()) {
+                        if (rs.next()) {
+                            double subtotal = rs.getDouble(1);
+                            subtotals.put(table, subtotal);
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error executing SQL queries: " + e.getMessage());
+        }
+
+        return subtotals;
+    }
+
+    public List<Map<String, String>> expensemarketing() {
+        List<Map<String, String>> market = new ArrayList<>();
+        try (Connection connection = DBConnectionConfigs.getConnection(); PreparedStatement pr = connection.prepareStatement("SELECT * FROM marketing")) {
+
+            try (ResultSet rs = pr.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, String> dat = new HashMap<>();
+                    dat.put("MarketingID", rs.getString("MarketingID"));
+                    dat.put("Name", rs.getString("Name"));
+                    dat.put("Amount", rs.getString("Amount"));
+                    market.add(dat);
+
+                }
+                return market;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, "An error occurred while fetching employees data", ex);
+        }
+        return null;
+    }
+    public String calculateNetProfitLoss() {
+        try (Connection connection = DBConnectionConfigs.getConnection();
+             CallableStatement cs = connection.prepareCall("{? = call CalculateNetProfitLoss()}")) {
+
+            cs.registerOutParameter(1, java.sql.Types.VARCHAR);
+
+            cs.execute();
+
+            return cs.getString(1);
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return "An error occurred while calculating net profit/loss.";
+        }
+    }
 }
