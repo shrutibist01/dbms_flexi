@@ -14,10 +14,10 @@
         <a href="/newuser"><button><i class="fas fa-user-plus"></i> Add Employee</button></a>
 
         <div>
-            <button><i class="fas fa-user-edit"></i> Update Employee Details</button>
+            <a href="/UpdateEmployee"><button><i class="fas fa-user-edit"></i> Update Employee Details</button></a>
         </div>
         <div>
-            <button><i class="fas fa-user-minus"></i> Remove Employee</button>
+            <a href="/showEmployees"><button><i class="fas fa-user-minus"></i> Remove Employee</button></a>
         </div>
 
         <h1>Project Management</h1>
@@ -36,7 +36,7 @@
             <a href="/addextraexpense"><button><i class="fas fa-file-invoice-dollar"></i> Add Miscellaneous Expenditure</button></a>
         </div>
         <div>
-            <button><i class="fas fa-shopping-cart"></i> Add Sales</button>
+            <a href="/addsale"><button><i class="fas fa-shopping-cart"></i> Add Sales</button></a>
         </div>
         <div>
             <button><i class="fas fa-chart-line"></i> Get Report for Net Expenditure</button>

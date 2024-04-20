@@ -6,7 +6,9 @@ package com.mycompany.dbms;
 
 import com.mycompany.dbms.dao.UsersDAO;
 import com.mycompany.dbms.data.Addfunds;
+import com.mycompany.dbms.data.Addsales;
 import com.mycompany.dbms.data.Empdata;
+import com.mycompany.dbms.data.Employee;
 import com.mycompany.dbms.data.ExtraExpenseAdd;
 import com.mycompany.dbms.data.Project;
 import com.mycompany.dbms.data.Userdata;
@@ -18,6 +20,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.ObjectStreamConstants;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -141,8 +144,7 @@ public class NewServlet extends HttpServlet {
                     request.getRequestDispatcher("/WEB-INF/pages/login.jsp").forward(request, response);
                 }
             }
-        }
-        else if (uri.equals("/addempproj")) {
+        } else if (uri.equals("/addempproj")) {
             String Method = request.getMethod();
             System.out.println(Method);
             if (Method.equals("GET")) {
@@ -164,19 +166,17 @@ public class NewServlet extends HttpServlet {
                     request.setAttribute("errorMessage", "Error in data sending");
                 }
             }
-        } 
-        
-                else if(uri.equals("/addfunds")) {
+        } else if (uri.equals("/addfunds")) {
             String method = request.getMethod();
             System.out.println(method);
             if (method.equals("GET")) {
                 request.getRequestDispatcher("/WEB-INF/pages/addfunds.jsp").forward(request, response);
             } else if (method.equals("POST")) {
                 String transactionID = request.getParameter("transactionID");
-                String InvestorName  = request.getParameter("InvestorName");
+                String InvestorName = request.getParameter("InvestorName");
                 int amount = Integer.parseInt(request.getParameter("amount"));
-                
-                Addfunds fund = new Addfunds(transactionID,InvestorName,amount);
+
+                Addfunds fund = new Addfunds(transactionID, InvestorName, amount);
                 UsersDAO usersDAO = UsersDAO.getInstance();
                 int result = usersDAO.AddnewFunds(fund);
                 if (result == 1) {
@@ -185,9 +185,23 @@ public class NewServlet extends HttpServlet {
                     request.setAttribute("errorMessage", "Error in data sending");
                     request.getRequestDispatcher("/admin").forward(request, response);
                 }
-            }}
+            }
+        } else if (uri.equals("/UpdateEmployee")) {
+            String method = request.getMethod();
+            System.out.println(method);
+            if (method.equals("GET")) {
+                request.getRequestDispatcher("/WEB-INF/pages/updateemployee.jsp").forward(request, response);
+            } else if (method.equals("POST")) {
+                int empID = Integer.parseInt(request.getParameter("empID"));
+                String empRole = request.getParameter("empRole");
+                String phone = request.getParameter("phone");
+                double salary = Double.parseDouble(request.getParameter("salary"));
+                UsersDAO usersDAO = UsersDAO.getInstance(); // Redirect to error page
+                usersDAO.updateEmployee(empID, empRole, phone, salary);
+                response.sendRedirect("/admin");
+            }
+        } else if (uri.equals("/addextraexpense")) {
 
-        else if(uri.equals("/addextraexpense")) {
             String method = request.getMethod();
             System.out.println(method);
             if (method.equals("GET")) {
@@ -204,12 +218,63 @@ public class NewServlet extends HttpServlet {
                     request.setAttribute("errorMessage", "Error in data sending");
                     request.getRequestDispatcher("/admin").forward(request, response);
                 }
+
             }
-        } else {
-            processRequest(request, response);
+        } else if (uri.equals("/showEmployees")) {
+
+            UsersDAO usersDAO = UsersDAO.getInstance();
+            List<Map<String, String>> employees = usersDAO.getAllEmployees();
+
+            request.setAttribute("employees", employees);
+            request.getRequestDispatcher("/WEB-INF/pages/showemployees.jsp").forward(request, response);
+            System.out.println("abc");
+            System.out.println(employees);
+            System.out.println("abc");
+        }
+        if (uri.equals("/deleteEmployee") && request.getMethod().equalsIgnoreCase("POST")) {
+            System.out.println("fuckking work");
+            String employeeIDStr = request.getParameter("employeeID");
+            if (employeeIDStr != null && !employeeIDStr.isEmpty()) {
+                int employeeID = Integer.parseInt(employeeIDStr);
+                UsersDAO usersDAO = UsersDAO.getInstance();
+                usersDAO.deleteEmployee(employeeID);
+                response.sendRedirect("/showEmployees?success=true");
+            }
+        } else if (uri.equals("/addsale")) {
+            String method = request.getMethod();
+            System.out.println(method);
+            if (method.equals("GET")) {
+                request.getRequestDispatcher("/WEB-INF/pages/addsale.jsp").forward(request, response);
+            } else if (method.equals("POST")) {
+                String saleID = request.getParameter("saleID");
+                String projectID = request.getParameter("projectID");
+                int profit = Integer.parseInt(request.getParameter("profit"));
+
+                UsersDAO usersDAO = UsersDAO.getInstance();
+
+                // Check if saleID already exists
+                if (usersDAO.isSaleIDExists(saleID)) {
+                    // If saleID already exists, display error message
+                    response.setContentType("text/html");
+                    PrintWriter out = response.getWriter();
+                    out.println("<script type=\"text/javascript\">");
+                    out.println("alert('Sale ID already exists. Please choose a different one.');");
+                    out.println("window.location.href='/admin';");
+                    out.println("</script>");
+                } else {
+                    // Sale ID does not exist, proceed with insertion
+                    Addsales sale = new Addsales(saleID, projectID, profit);
+                    int result = usersDAO.addNewSale(sale);
+                    if (result == 1) {
+                        response.sendRedirect("/admin?success=true");
+                    } else {
+                        request.setAttribute("errorMessage", "Error in data sending");
+                        request.getRequestDispatcher("/admin").forward(request, response);
+                    }
+                }
+            }
         }
 
-     
     }
 
 // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -6,7 +6,9 @@ package com.mycompany.dbms.dao;
 
 import com.mycompany.dbms.config.DBConnectionConfigs;
 import com.mycompany.dbms.data.Addfunds;
+import com.mycompany.dbms.data.Addsales;
 import com.mycompany.dbms.data.Empdata;
+import com.mycompany.dbms.data.Employee;
 import com.mycompany.dbms.data.ExtraExpenseAdd;
 import com.mycompany.dbms.data.Project;
 import com.mycompany.dbms.data.Userdata;
@@ -255,6 +257,7 @@ public class UsersDAO {
             }
         }
     }
+
     public int AddnewFunds(Addfunds addFunds) {
         Connection connection = null;
         PreparedStatement insertStmt = null;
@@ -266,7 +269,7 @@ public class UsersDAO {
             insertStmt.setString(2, addFunds.getInvestorName());
             insertStmt.setInt(3, addFunds.getAmount());
             insertStmt.executeUpdate();
-            
+
             return 1; // Successfully inserted
         } catch (SQLException ex) {
             Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -281,11 +284,170 @@ public class UsersDAO {
                     connection.close();
                 }
             } catch (SQLException ex) {
-               Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
-    public int saveproj(Project project) {
+
+    public boolean isSaleIDExists(String saleID) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        boolean exists = false;
+        try {
+            connection = DBConnectionConfigs.getConnection();
+            String query = "SELECT COUNT(*) FROM sales WHERE SaleID = ?";
+            statement = connection.prepareStatement(query);
+            statement.setString(1, saleID);
+            resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                int count = resultSet.getInt(1);
+                exists = (count > 0);
+            }
+        } catch (SQLException ex) {
+            // Handle any SQL exceptions
+            ex.printStackTrace();
+        } finally {
+            // Close resources in a finally block
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (statement != null) {
+                    statement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return exists;
+    }
+
+    public int addNewSale(Addsales sale) {
+        Connection connection = null;
+        PreparedStatement insertStmt = null;
+        try {
+            connection = DBConnectionConfigs.getConnection();
+
+            insertStmt = connection.prepareStatement("INSERT INTO sales (SaleID, ProjectID, Profit) VALUES (?, ?, ?)");
+            insertStmt.setString(1, sale.getSaleID());
+            insertStmt.setString(2, sale.getProjectID());
+            insertStmt.setInt(3, sale.getProfit());
+            insertStmt.executeUpdate();
+
+            return 1; // Successfully inserted
+        } catch (SQLException ex) {
+            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return 0; // Error occurred
+        } finally {
+            // Close all resources in a finally block
+            try {
+                if (insertStmt != null) {
+                    insertStmt.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    private static final String UPDATE_EMPLOYEE_PROCEDURE = "{CALL UpdateEmployee(?, ?, ?, ?)}";
+
+    public void updateEmployee(int empID, String empRole, String phone, double salary) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        try {
+            connection = DBConnectionConfigs.getConnection();
+            statement = connection.prepareCall(UPDATE_EMPLOYEE_PROCEDURE);
+            statement.setInt(1, empID);
+            statement.setString(2, empRole);
+            statement.setString(3, phone);
+            statement.setDouble(4, salary);
+            statement.executeUpdate();
+            System.out.println(phone);
+        } catch (SQLException ex) {
+            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    public List<Map<String, String>> getAllEmployees() {
+        List<Map<String, String>> employeesData = new ArrayList<>();
+        try (Connection connection = DBConnectionConfigs.getConnection(); PreparedStatement pr = connection.prepareStatement("SELECT * FROM employees")) {
+
+            try (ResultSet rs = pr.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, String> dat = new HashMap<>();
+                    dat.put("EmployeeID", rs.getString("EmployeeID"));
+                    dat.put("EmployeeName", rs.getString("EmployeeName"));
+                    dat.put("EmployeeRole", rs.getString("EmployeeRole"));
+                    dat.put("PhoneNumber", rs.getString("PhoneNumber"));
+                    dat.put("Username", rs.getString("Username"));
+                    dat.put("Salary", rs.getString("Salary"));
+                    employeesData.add(dat);
+                    
+                    
+                }
+                
+                
+                return employeesData;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, "An error occurred while fetching employees data", ex);
+        }
+        return null;
+    }
+
+public void deleteEmployee(int employeeID) {
+    try (Connection connection = DBConnectionConfigs.getConnection()) {
+        // Start a transaction
+        connection.setAutoCommit(false);
+
+        try (PreparedStatement statement = connection.prepareStatement("DELETE FROM projectemployees WHERE EmployeeID = ?")) {
+            statement.setInt(1, employeeID);
+            statement.executeUpdate();
+        } catch (SQLException ex) {
+            connection.rollback(); // Rollback transaction if an error occurs
+            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, "An error occurred while deleting employee's projects", ex);
+            return;
+        }
+
+        try (PreparedStatement statement = connection.prepareStatement("DELETE FROM employees WHERE EmployeeID = ?")) {
+            statement.setInt(1, employeeID); // Setting int instead of String
+            statement.executeUpdate();
+        } catch (SQLException ex) {
+            connection.rollback(); // Rollback transaction if an error occurs
+            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, "An error occurred while deleting employee", ex);
+            return;
+        }
+
+        // Commit the transaction if all operations succeed
+        connection.commit();
+    } catch (SQLException ex) {
+        Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, "An error occurred while managing transaction", ex);
+    }
+}
+
+
+
+
+public int saveproj(Project project) {
         Connection connection = null;
         PreparedStatement projectStmt = null;
         try {
@@ -304,11 +466,19 @@ public class UsersDAO {
 
             projectStmt.executeUpdate();
             return 1; // Success
-        } catch (SQLException ex) {
-            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
+
+
+} catch (SQLException ex) {
+            Logger.getLogger(UsersDAO.class  
+
+.getName()).log(Level.SEVERE, null, ex);
             return 0; // Failure
-        } catch (Exception ex) {
-            Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
+
+
+} catch (Exception ex) {
+            Logger.getLogger(UsersDAO.class  
+
+.getName()).log(Level.SEVERE, null, ex);
             return 0; // Failure
         } finally {
             try {
@@ -317,9 +487,12 @@ public class UsersDAO {
                 }
                 if (connection != null) {
                     connection.close();
-                }
+
+}
             } catch (SQLException ex) {
-                Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(UsersDAO.class  
+
+.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
