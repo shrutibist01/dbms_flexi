@@ -1,3 +1,4 @@
+<!--user login-->
 <!DOCTYPE html>
 <html>
     <head>
@@ -137,11 +138,14 @@
                 height:100%;
                 font-family: 'Open Sans', sans-serif;
                 background:#092756;
+                background-image: url(https://dm0qx8t0i9gc9.cloudfront.net/thumbnails/image/rDtN98Qoishumwih/abstract-blue-light-background_SvZPryOnfl_thumb.jpg);
+                background-size: 106%
+                
             }
 
             .login {
                 position: absolute;
-                top: 50%;
+                top: 47%;
                 left: 50%;
                 margin: -150px 0 0 -150px;
                 width:300px;
@@ -149,7 +153,7 @@
             }
 
             .login h1 {
-                color: #fff;
+                color: #DEECFF;
                 text-shadow: 0 0 10px rgba(0,0,0,0.3);
                 letter-spacing:1px;
                 text-align:center;
@@ -192,17 +196,42 @@
             .admin-icon i {
                 margin-right: 5px;
             }
+        
+            .transparent-glass {
+                background-color: rgba(255, 255, 255, 0.3); /* Adjust the color and transparency as needed */
+                backdrop-filter: blur(8px); /* Apply a blur effect to create the glassy look */
+                border-radius: 20px; /* Add border-radius for rounded corners */
+                padding: 20px; /* Add some padding for spacing */
+                height:350px;
+  
+            }
+    
         </style>
+        
+        
+        
     </head>
     <body>
-        <div action="main" class="login">
-            <h1>Login</h1>
-            <a href="adminlog" class="admin-icon"><i class="fas fa-user-shield"></i> Admin Login</a>
-            <form method="post">
-                <input type="text" name="username" placeholder="Username" required="required" />
-                <input type="password" name="password" placeholder="Password" required="required" />
-                <button type="submit" class="btn btn-primary btn-block btn-large">Let me in.</button>
-            </form>
-        </div>
+        <div action="main" class="login transparent-glass" >
+    <h1>Login</h1>
+    <a href="adminlog" class="admin-icon" style="color:#DEECFF"><i class="fas fa-user-shield"></i> Admin Login</a>
+    <form method="post" style="margin-top:8px">
+        <input type="text" name="username" placeholder="Username" required="required" style="background-color:#DBDFEA; color:black" />
+        <input type="password" name="password" placeholder="Password" required="required" style="margin-bottom: 10px; background-color:#DBDFEA;color:black" />
+        <button type="submit" class="btn btn-primary btn-block btn-large" style="margin-top: 10px; color:#DEECFF">Login</button>
+    </form>
+</div>
+
+        
+
+    
+  </body>
+</html>
+        
+        
+        
+        
+
+
     </body>
 </html>

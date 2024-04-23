@@ -1,10 +1,13 @@
+<!--adminlogin-->
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
         <title>Login</title>
+         
         <style>
-            @import url(https://fonts.googleapis.com/css?family=Open+Sans);
+              @import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
             .btn {
                 display: inline-block;
                 *display: inline;
@@ -38,9 +41,15 @@
                 cursor: pointer;
                 *margin-left: .3em;
             }
-            .btn:hover, .btn:active, .btn.active, .btn.disabled, .btn[disabled] {
+
+            .btn:hover,
+            .btn:active,
+            .btn.active,
+            .btn.disabled,
+            .btn[disabled] {
                 background-color: #e6e6e6;
             }
+
             .btn-large {
                 padding: 9px 14px;
                 font-size: 15px;
@@ -49,6 +58,7 @@
                 -moz-border-radius: 5px;
                 border-radius: 5px;
             }
+
             .btn:hover {
                 color: #333333;
                 text-decoration: none;
@@ -60,13 +70,17 @@
                 -o-transition: background-position 0.1s linear;
                 transition: background-position 0.1s linear;
             }
-            .btn-primary, .btn-primary:hover {
+
+            .btn-primary,
+            .btn-primary:hover {
                 text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
                 color: #ffffff;
             }
+
             .btn-primary.active {
                 color: rgba(255, 255, 255, 0.75);
             }
+
             .btn-primary {
                 background-color: #4a77d4;
                 background-image: -moz-linear-gradient(top, #6eb6de, #4a77d4);
@@ -81,10 +95,16 @@
                 text-shadow: 1px 1px 1px rgba(0,0,0,0.4);
                 box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.5);
             }
-            .btn-primary:hover, .btn-primary:active, .btn-primary.active, .btn-primary.disabled, .btn-primary[disabled] {
+
+            .btn-primary:hover,
+            .btn-primary:active,
+            .btn-primary.active,
+            .btn-primary.disabled,
+            .btn-primary[disabled] {
                 filter: none;
                 background-color: #4a77d4;
             }
+
             .btn-block {
                 width: 100%;
                 display:block;
@@ -109,21 +129,31 @@
                 height:100%;
                 font-family: 'Open Sans', sans-serif;
                 background:#092756;
+                background-image: url(https://dm0qx8t0i9gc9.cloudfront.net/thumbnails/image/rDtN98Qoishumwih/abstract-blue-light-background_SvZPryOnfl_thumb.jpg);
+                background-size: 106%
+                
             }
+
             .login {
                 position: absolute;
-                top: 50%;
+                top: 47%;
                 left: 50%;
                 margin: -150px 0 0 -150px;
                 width:300px;
                 height:300px;
+                background-color: rgba(255, 255, 255, 0.3); /* Set background color with transparency */
+                border-radius: 20px; /* Add rounded corners */
+                padding: 20px; /* Add padding for spacing */
             }
+
             .login h1 {
-                color: #fff;
+                color: #DEECFF;
                 text-shadow: 0 0 10px rgba(0,0,0,0.3);
                 letter-spacing:1px;
                 text-align:center;
             }
+
+
 
             input {
                 width: 100%;
@@ -144,10 +174,31 @@
                 -ms-transition: box-shadow .5s ease;
                 transition: box-shadow .5s ease;
             }
+
             input:focus {
                 box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgba(255,255,255,0.2);
             }
 
+            .admin-icon {
+                color: #fff;
+                text-decoration: none;
+                margin-bottom: 20px;
+                display: block;
+                text-align: center;
+            }
+
+            .admin-icon i {
+                margin-right: 5px;
+            }
+        
+            .transparent-glass {
+                background-color: rgba(255, 255, 255, 0.3); /* Adjust the color and transparency as needed */
+                backdrop-filter: blur(8px); /* Apply a blur effect to create the glassy look */
+                border-radius: 20px; /* Add border-radius for rounded corners */
+                padding: 20px; /* Add some padding for spacing */
+                height:350px;
+  
+            }
         </style>
         <script>
             <%-- Check if errorMessage exists and display a popup if it does --%>
@@ -163,9 +214,9 @@
         <div class="login">
             <h1>Admin Login</h1>
             <form method="post">
-                <input type="text" name="u" placeholder="admin name" required="required" />
-                <input type="password" name="p" placeholder="adminpass word" required="required" />
-                <button type="submit" class="btn btn-primary btn-block btn-large">Let me in.</button>
+                <input type="text" name="u" placeholder="admin name" required="required" style="background-color:#DBDFEA; color:black" />
+                <input type="password" name="p" placeholder="admin password" required="required" style="margin-bottom: 20px; background-color:#DBDFEA; color:black" />
+                <button type="submit" class="btn btn-primary btn-block btn-large" style="margin-top: 10px; color:#DEECFF">Login</button>
             </form>
         </div>
     </body>

@@ -1,3 +1,4 @@
+<!--show employee / delete-->
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -5,19 +6,28 @@
     <meta charset="UTF-8">
     <title>Show Employees</title>
     <style>
+        body{
+            background-color: #6895D2;
+        }
         table {
             border-collapse: collapse;
-            width: 100%;
+            width: 80%;
+            background-color: rgba(229, 225, 218,0.6);
+            margin-left: 135px;
+            margin-top: 70px;
+            
         }
 
         th, td {
             border: 1px solid black;
             padding: 8px;
             text-align: left;
+            
         }
 
         th {
-            background-color: #f2f2f2;
+            background-color: black;
+            color: white;
         }
 
         .delete-button {
@@ -30,6 +40,13 @@
         .delete-button:hover {
             color: red;
         }
+        h1{
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: -50px;
+            color:#F0EBE3;
+        }
+        
     </style>
 </head>
 <body>

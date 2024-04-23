@@ -167,7 +167,11 @@ public class NewServlet extends HttpServlet {
                     request.setAttribute("errorMessage", "Error in data sending");
                 }
             }
-        } else if (uri.equals("/addfunds")) {
+        } 
+        else if (uri.equals("/logout")) {
+            request.getSession().invalidate();
+            response.sendRedirect("/");
+        }else if (uri.equals("/addfunds")) {
             String method = request.getMethod();
             System.out.println(method);
             if (method.equals("GET")) {
@@ -179,7 +183,7 @@ public class NewServlet extends HttpServlet {
 
                 Addfunds fund = new Addfunds(transactionID, InvestorName, amount);
                 UsersDAO usersDAO = UsersDAO.getInstance();
-                int result = usersDAO.AddnewFunds(fund);
+                int result = usersDAO.addextra(fund);
                 if (result == 1) {
                     response.sendRedirect("/admin?success=true");
                 } else {

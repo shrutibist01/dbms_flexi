@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 import javax.management.Query;
 
-public class UsersDAO {
+public class UsersDAO implements DAOInterface {
 
     private static UsersDAO instance;
 
@@ -61,11 +61,13 @@ public class UsersDAO {
 
     }
      */
+    @Override
     public Map<String, String> getdata(String username, String password) {
         Map<String, String> data = new HashMap<>();
         List<Map<String, String>> projects = new ArrayList<>();
 
-        try (Connection connection = DBConnectionConfigs.getConnection(); PreparedStatement pr = connection.prepareStatement("SELECT * FROM employees WHERE Username=? AND Password=?")) {
+        try (Connection connection = DBConnectionConfigs.getConnection(); 
+                PreparedStatement pr = connection.prepareStatement("SELECT * FROM employees WHERE Username=? AND Password=?")) {
 
             pr.setString(1, username);
             pr.setString(2, password);
@@ -104,6 +106,7 @@ public class UsersDAO {
         return data;
     }
 
+    @Override
     public Map<String, String> calculateSalarySplit(String empId) {
         Map<String, String> salarySplit = new HashMap<>();
         try (Connection connection = DBConnectionConfigs.getConnection(); CallableStatement stmt = connection.prepareCall("{CALL CalculateSalarySplitByUsername(?)}")) {
@@ -125,6 +128,7 @@ public class UsersDAO {
         return salarySplit;
     }
 
+    @Override
     public List<Map<String, String>> checkProject(String empUsername) {
         List<Map<String, String>> projectsList = new ArrayList<>();
         try (Connection connection = DBConnectionConfigs.getConnection(); CallableStatement stmt = connection.prepareCall("{CALL GetEmployeeProjectDetails(?)}")) {
@@ -158,6 +162,7 @@ public class UsersDAO {
         return projectsList;
     }
 
+    @Override
     public Map<String, String> admindata(String username, String password) {
         Map<String, String> dat = new HashMap<>();
         try (Connection connection = DBConnectionConfigs.getConnection(); PreparedStatement pr = connection.prepareStatement("SELECT * FROM employees WHERE Username=? AND Password=? AND EmployeeRole = ?")) {
@@ -186,6 +191,7 @@ public class UsersDAO {
         return null;
     }
 
+    @Override
     public int save(Empdata user) {
         Connection connection = DBConnectionConfigs.getConnection();
         try {
@@ -217,6 +223,7 @@ public class UsersDAO {
         return (0);
     }
 
+    @Override
     public String updateProjectStatus(String projectID, String newStatus) {
         String resultMessage = "";
         Connection connection = null;
@@ -243,6 +250,7 @@ public class UsersDAO {
         return resultMessage;
     }
 
+    @Override
     public int addextra(ExtraExpenseAdd expense) {
         Connection connection = null;
         PreparedStatement insertStmt = null;
@@ -286,13 +294,14 @@ public class UsersDAO {
         }
     }
 
-    public int AddnewFunds(Addfunds addFunds) {
+    @Override
+    public int addextra(Addfunds addFunds) {
         Connection connection = null;
         PreparedStatement insertStmt = null;
         try {
             connection = DBConnectionConfigs.getConnection();
 
-            insertStmt = connection.prepareStatement("INSERT INTO AddFunds (TransactionID, InvestorName, Amount) VALUES (?, ?, ?)");
+            insertStmt = connection.prepareStatement("INSERT INTO Funds (TransactionID, InvestorName, Amount) VALUES (?, ?, ?)");
             insertStmt.setString(1, addFunds.getTransactionID());
             insertStmt.setString(2, addFunds.getInvestorName());
             insertStmt.setInt(3, addFunds.getAmount());
@@ -317,6 +326,7 @@ public class UsersDAO {
         }
     }
 
+    @Override
     public boolean isSaleIDExists(String saleID) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -354,6 +364,7 @@ public class UsersDAO {
         return exists;
     }
 
+    @Override
     public int addNewSale(Addsales sale) {
         Connection connection = null;
         PreparedStatement insertStmt = null;
@@ -386,6 +397,7 @@ public class UsersDAO {
     }
     private static final String UPDATE_EMPLOYEE_PROCEDURE = "{CALL UpdateEmployee(?, ?, ?, ?)}";
 
+    @Override
     public void updateEmployee(int empID, String empRole, String phone, double salary) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -415,9 +427,11 @@ public class UsersDAO {
         }
     }
 
+    @Override
     public List<Map<String, String>> getAllEmployees() {
         List<Map<String, String>> employeesData = new ArrayList<>();
-        try (Connection connection = DBConnectionConfigs.getConnection(); PreparedStatement pr = connection.prepareStatement("SELECT * FROM employees")) {
+        try (Connection connection = DBConnectionConfigs.getConnection();
+                PreparedStatement pr = connection.prepareStatement("SELECT * FROM employees where EmployeeRole != 'Admin'")) {
 
             try (ResultSet rs = pr.executeQuery()) {
                 while (rs.next()) {
@@ -440,6 +454,7 @@ public class UsersDAO {
         return null;
     }
 
+    @Override
     public void deleteEmployee(int employeeID) {
         try (Connection connection = DBConnectionConfigs.getConnection()) {
             // Start a transaction
@@ -454,8 +469,10 @@ public class UsersDAO {
                 return;
             }
 
-            try (PreparedStatement statement = connection.prepareStatement("DELETE FROM employees WHERE EmployeeID = ?")) {
-                statement.setInt(1, employeeID); // Setting int instead of String
+            try (PreparedStatement statement = connection.prepareStatement("DELETE FROM employees WHERE EmployeeID = ? and EmployeeRole!=?")) {
+                statement.setInt(1, employeeID);
+                statement.setString(2, "Admin");
+                // Setting int instead of String
                 statement.executeUpdate();
             } catch (SQLException ex) {
                 connection.rollback(); // Rollback transaction if an error occurs
@@ -470,6 +487,7 @@ public class UsersDAO {
         }
     }
 
+    @Override
     public int saveEmployees(String projectId, List<EmployeeProj> employees) {
         int rowsAffected = 0;
         Connection connection = null;
@@ -491,6 +509,7 @@ public class UsersDAO {
         return rowsAffected;
     }
 
+    @Override
     public int saveproj(Project project) {
         Connection connection = null;
         PreparedStatement projectStmt = null;
@@ -536,6 +555,7 @@ public class UsersDAO {
         }
     }
 
+    @Override
     public List<Map<String, String>> expenseEmployees() {
         List<Map<String, String>> employeesData = new ArrayList<>();
         try (Connection connection = DBConnectionConfigs.getConnection(); PreparedStatement pr = connection.prepareStatement("SELECT * FROM employees")) {
@@ -557,6 +577,7 @@ public class UsersDAO {
         return null;
     }
 
+    @Override
     public List<Map<String, String>> expenseExtra() {
         List<Map<String, String>> expenseData = new ArrayList<>();
         try (Connection connection = DBConnectionConfigs.getConnection(); PreparedStatement pr = connection.prepareStatement("SELECT * FROM extraexpenses")) {
@@ -572,7 +593,7 @@ public class UsersDAO {
                 }
                 System.out.println(expenseData);
                 return expenseData;
-                
+
             }
         } catch (SQLException ex) {
             Logger.getLogger(UsersDAO.class.getName()).log(Level.SEVERE, "An error occurred while fetching employees data", ex);
@@ -580,6 +601,7 @@ public class UsersDAO {
         return null;
     }
 
+    @Override
     public List<Map<String, String>> expenseProjects() {
         List<Map<String, String>> projects = new ArrayList<>();
         try (Connection connection = DBConnectionConfigs.getConnection(); PreparedStatement pr = connection.prepareStatement("SELECT * FROM projects")) {
@@ -601,6 +623,7 @@ public class UsersDAO {
         return null;
     }
 
+    @Override
     public List<Map<String, String>> expensesales() {
         List<Map<String, String>> sales = new ArrayList<>();
         try (Connection connection = DBConnectionConfigs.getConnection(); PreparedStatement pr = connection.prepareStatement("SELECT * FROM sales")) {
@@ -621,6 +644,7 @@ public class UsersDAO {
         return null;
     }
 
+    @Override
     public List<Map<String, String>> expensefunds() {
         List<Map<String, String>> funds = new ArrayList<>();
         try (Connection connection = DBConnectionConfigs.getConnection(); PreparedStatement pr = connection.prepareStatement("SELECT * FROM funds")) {
@@ -668,6 +692,7 @@ public class UsersDAO {
         return subtotals;
     }
 
+    @Override
     public List<Map<String, String>> expensemarketing() {
         List<Map<String, String>> market = new ArrayList<>();
         try (Connection connection = DBConnectionConfigs.getConnection(); PreparedStatement pr = connection.prepareStatement("SELECT * FROM marketing")) {
@@ -688,9 +713,10 @@ public class UsersDAO {
         }
         return null;
     }
+
+    @Override
     public String calculateNetProfitLoss() {
-        try (Connection connection = DBConnectionConfigs.getConnection();
-             CallableStatement cs = connection.prepareCall("{? = call CalculateNetProfitLoss()}")) {
+        try (Connection connection = DBConnectionConfigs.getConnection(); CallableStatement cs = connection.prepareCall("{? = call CalculateNetProfitLoss()}")) {
 
             cs.registerOutParameter(1, java.sql.Types.VARCHAR);
 

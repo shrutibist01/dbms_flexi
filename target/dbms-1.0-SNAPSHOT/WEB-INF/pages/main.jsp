@@ -1,105 +1,130 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ taglib  prefix="c" uri="jakarta.tags.core" %>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
 <html>
+
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
-        table, th, td {
-            border: 1px solid black;
-        }
-        .employee-info {
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 20px;
-            margin: 20px 0;
-            background-color: #f9f9f9;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .employee-info-item {
+        .container {
             display: flex;
-            margin-bottom: 10px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 20vh;
+            text-align: center;
         }
-        .employee-info-label {
-            width: 150px;
-            font-weight: bold;
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
         }
-        .employee-info-value {
-            flex: 1;
+
+        .employee-details {
+            padding: 30px;
+            margin: auto;
+            background-color: #20182620;
+            border-radius: 10px;
+            width: 50%;
+            border: 1px solid #ccc;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .custom-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 5px;
+            text-align: center;
+            background-color: #B4D4FF;
+            color: black;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, .5),
+                7px 7px 20px 0px rgba(77, 67, 207, 0.51),
+                4px 4px 5px 0px rgba(0, 0, 0, .1);
+        }
+
+        .custom-btn:hover {
+            background-color: #280274;
+            color: white;
         }
     </style>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+          crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
     <title>JSP Page</title>
 </head>
-<body>
-<nav class="navbar navbar-expand-lg" style="background-color: #092756;">
+
+<body style="background-color:#40679E">
+<nav class="navbar navbar-expand-lg" style="background-color: #487fc2a6;">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#" style="color: white;">Navbar</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#" style="color: white;">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" style="color: white;">Link</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" aria-disabled="true" style="color: white;">Disabled</a>
+                    <a class="nav-link active" aria-current="page" href="/" style="color: white;">
+                        <i class="fas fa-home"></i> Home
+                    </a>
                 </li>
             </ul>
-            <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
         </div>
     </div>
 </nav>
 
-<div class="employee-info-item">
-        <div class="employee-info-label">Employee Details:</div>
+<div class="container mt-5" >
+    <div class="employee-details" style="background-color: #B7C9F2">
+        <h3 style="color:#280274">Employee Details</h3>
+        <table>
+            <tr>
+                <th>Name</th>
+                <td>${data.EmployeeName}</td>
+            </tr>
+            <tr>
+                <th>Position</th>
+                <td>${data.EmployeeRole}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>${data.EmployeeID}</td>
+            </tr>
+            <tr>
+                <th>Phone Number</th>
+                <td>${data.PhoneNumber}</td>
+            </tr>
+            <tr>
+                <th>Username</th>
+                <td>${data.Username}</td>
+            </tr>
+        </table>
     </div>
-<div class="employee-info">
-    <div class="employee-info-item">
-        <div class="employee-info-label">Employee Name:</div>
-        <div class="employee-info-value">${data.EmployeeName}</div>
+
+    <div>
+        <a href="empproj?username=<%= request.getSession().getAttribute("username") %>">
+            <button class="custom-btn">View Projects</button>
+        </a>
+
+        <a href="empsal?username=<%= request.getSession().getAttribute("username") %>">
+            <button class="custom-btn">View Salary</button>
+        </a>
     </div>
-    <div class="employee-info-item">
-        <div class="employee-info-label">Employee Role:</div>
-        <div class="employee-info-value">${data.EmployeeRole}</div>
-    </div>
-    <div class="employee-info-item">
-        <div class="employee-info-label">Employee ID:</div>
-        <div class="employee-info-value">${data.EmployeeID}</div>
-    </div>
-    <div class="employee-info-item">
-        <div class="employee-info-label">Phone Number:</div>
-        <div class="employee-info-value">${data.PhoneNumber}</div>
-    </div>
-    <div class="employee-info-item">
-        <div class="employee-info-label">Username:</div>
-        <div class="employee-info-value">${data.Username}</div>
-    </div>
-    
-    
 </div>
-   <br><br>
-</div>
 
-
-
-
-   
-<a href="empproj?username=<%= request.getSession().getAttribute("username") %>">View Projects</a>
-<a href="empsal?username=<%= request.getSession().getAttribute("username") %>">View Salary</a>
-
-
-
-</div>
 </body>
+
 </html>
