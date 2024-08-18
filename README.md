@@ -1,4 +1,4 @@
-# Company Expense Management System
+# ExpenSure: Company Expense Management System
 
 ## Overview
 The Company Expense Management System is a web application designed to streamline the management of employee details, project information, and financial data within a company. It provides two levels of authentication: employee and admin.
